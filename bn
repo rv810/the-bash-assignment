@@ -1,0 +1,80 @@
+#!/bin/bash
+
+maleNamesRank() {
+	grep -P ",M," us_baby_names/yob$1.txt > male_names.txt
+	output=$(grep -P -i -n "^$word," male_names.txt)
+	if [[ -z $output ]]
+	then
+		echo "$1: $word not found among male names."
+	else
+		rank=$(echo $output | grep -P -o "^[0-9]+")
+		total=$(wc -l < male_names.txt)
+		echo "$1: $word ranked $rank out of $total male names."
+	fi
+}
+
+femaleNamesRank() {
+	grep -P ",F," us_baby_names/yob$1.txt > female_names.txt
+	output=$(grep -P -i -n "^$word," female_names.txt)
+	if [[ -z $output ]]
+	then
+			echo "$1: $word not found among female names."
+	else
+			rank=$(echo $output | grep -P -o "^[0-9]+")
+			total=$(wc -l < female_names.txt)
+			echo "$1: $word ranked $rank out of $total female names."
+	fi
+}
+
+usage() {
+	echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
+}
+
+
+if [[ "$#" != "2" ]]
+then
+	usage
+	exit 1
+
+elif [[ $1 =~ ^[0-9]{4}$ && $2 =~ ^[fmFMbB]$ ]]
+then
+	if [[ -f us_baby_names/yob$1.txt ]]
+	then
+		while true 
+		do
+			read line
+			for word in $line
+			do
+				if [[ $word =~ ^[a-zA-Z]+$ ]]
+				then
+					if [[ "$2" == "M" || "$2" == 'm' ]]
+					then
+						maleNamesRank $1 $word
+
+					elif [[ "$2" == "F" || "$2" == "f" ]]
+					then
+						femaleNamesRank $1 $word
+						
+					elif [[ "$2" == "B" || "$2" == "b" ]]
+					then
+						maleNamesRank $1 $word
+						femaleNamesRank $1 $word
+					fi
+				else
+					echo "Badly formatted name: $word" >&2
+					exit 3
+				fi
+			done
+		done
+	else
+		echo "No data for $1" >&2
+		exit 4
+	fi
+else
+	usage
+	if [[ "$2" =~ [^fFmMbB] ]]
+	then
+		echo "Badly formatted assigned gender: $2" >&2
+	fi
+	exit 2
+fi
