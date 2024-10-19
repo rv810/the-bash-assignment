@@ -2,7 +2,7 @@
 
 maleNamesRank() {
 	grep -P ",M," us_baby_names/yob$1.txt > male_names.txt
-	output=$(grep -P -i -n "^$word," male_names.txt)
+	output=$(grep -P -i -n "^$word,M," male_names.txt)
 	if [[ -z $output ]]
 	then
 		echo "$1: $word not found among male names."
@@ -27,9 +27,39 @@ femaleNamesRank() {
 }
 
 usage() {
-	echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
+	echo "bn <year> <assigned gender: f|F|m|M|b|B>" >&2
 }
 
+help() {
+    echo "bn - Baby Name Ranker (Version v1.0.0)"
+    echo
+    echo "This script finds the ranking of a name among male, female, or both genders for a given year."
+    echo "It uses US baby name data to determine rankings."
+    echo
+    echo "Usage:"
+    echo "  bn <year> <assigned gender f|F|m|M|b|B>"
+    echo
+    echo "Arguments:"
+    echo "  <year>              The year for which to find the ranking (e.g., 1990)"
+    echo "  <assigned gender>    The gender for which to rank the name. Options:"
+    echo "                      f or F for female"
+    echo "                      m or M for male"
+    echo "                      b or B for both genders"
+    echo
+    echo "Flags:"
+    echo "  --help              Show this help message and exit"
+    echo
+    echo "Examples:"
+    echo "  bn 1990 m           Find the ranking of male names in 1990"
+    echo "  bn 1990 f           Find the ranking of female names in 1990"
+    echo "  bn 1990 b           Find the ranking of both male and female names in 1990"
+}
+
+if [[ "$1" == "--help" ]]
+then
+	help
+	exit 0
+fi
 
 if [[ "$#" != "2" ]]
 then
@@ -40,9 +70,8 @@ elif [[ $1 =~ ^[0-9]{4}$ && $2 =~ ^[fmFMbB]$ ]]
 then
 	if [[ -f us_baby_names/yob$1.txt ]]
 	then
-		while true 
+		while read line 
 		do
-			read line
 			for word in $line
 			do
 				if [[ $word =~ ^[a-zA-Z]+$ ]]
@@ -71,10 +100,14 @@ then
 		exit 4
 	fi
 else
-	usage
-	if [[ "$2" =~ [^fFmMbB] ]]
+	if [[ ! "$1" =~ ^[0-9]{4}$ ]]
+	then
+		echo "Badly formatted year: $1" >&2
+
+	elif [[ "$2" =~ [^fFmMbB] ]]
 	then
 		echo "Badly formatted assigned gender: $2" >&2
 	fi
+	usage
 	exit 2
 fi
