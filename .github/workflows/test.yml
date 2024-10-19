@@ -7,10 +7,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4  check out the repo
+    - uses: actions/checkout@v4
 
     - name: Run Tests
-      run: ./test_script > test_results.txt  test command
+      run: ./test_script > test_results.txt
 
     - name: Upload Test Results
       if: ${{ always() }} 
