@@ -1,35 +1,66 @@
 #!/bin/bash
+#Finds the ranking of a name among male, female, or both genders for a given year, from US baby name data.
+#Resham Vani, McMaster University, 2024
 
+
+###########################
+# Ranks male name
+# Globals: None
+# Arguments: $1 = year $word = name
+# Outputs: returns rank of name out of total male names (or that the name is not found among male names)
+# Returns: N.A.
+###########################
 maleNamesRank() {
 	grep -P ",M," us_baby_names/yob$1.txt > male_names.txt
-	output=$(grep -P -i -n "^$word,M," male_names.txt)
+	local output=$(grep -P -i -n "^$word,M," male_names.txt)
 	if [[ -z $output ]]
 	then
 		echo "$1: $word not found among male names."
 	else
-		rank=$(echo $output | grep -P -o "^[0-9]+")
-		total=$(wc -l < male_names.txt)
+		local rank=$(echo $output | grep -P -o "^[0-9]+")
+		local total=$(wc -l < male_names.txt)
 		echo "$1: $word ranked $rank out of $total male names."
 	fi
 }
 
+###########################
+# Ranks female name
+# Globals: None
+# Arguments: $1 = year $word = name
+# Outputs: returns rank of name out of total female names (or that the name is not found among female names)
+# Returns: N.A.
+###########################
 femaleNamesRank() {
 	grep -P ",F," us_baby_names/yob$1.txt > female_names.txt
-	output=$(grep -P -i -n "^$word," female_names.txt)
+	local output=$(grep -P -i -n "^$word," female_names.txt)
 	if [[ -z $output ]]
 	then
 			echo "$1: $word not found among female names."
 	else
-			rank=$(echo $output | grep -P -o "^[0-9]+")
-			total=$(wc -l < female_names.txt)
+			local rank=$(echo $output | grep -P -o "^[0-9]+")
+			local total=$(wc -l < female_names.txt)
 			echo "$1: $word ranked $rank out of $total female names."
 	fi
 }
 
+###########################
+# Displays utility usage
+# Globals: None
+# Arguments: None
+# Outputs: Displays bn utility usage sends to stderr
+#Returns: N.A.
+###########################
 usage() {
 	echo "bn <year> <assigned gender: f|F|m|M|b|B>" >&2
 }
 
+###########################
+# Displays help message
+# Globals: None
+# Arguments: None
+# Outputs: Displays help message for how to use bn and accepted arguments
+#Returns: N.A.
+###########################
 help() {
     echo "bn - Baby Name Ranker (Version v1.0.0)"
     echo
@@ -37,7 +68,7 @@ help() {
     echo "It uses US baby name data to determine rankings."
     echo
     echo "Usage:"
-    echo "  bn <year> <assigned gender f|F|m|M|b|B>"
+    usage
     echo
     echo "Arguments:"
     echo "  <year>              The year for which to find the ranking (e.g., 1990)"
@@ -66,15 +97,15 @@ then
 	usage
 	exit 1
 
-elif [[ $1 =~ ^[0-9]{4}$ && $2 =~ ^[fmFMbB]$ ]]
+elif [[ $1 =~ ^[0-9]{4}$ && $2 =~ ^[fmFMbB]$ ]] #checks if year and gender formatted correctly
 then
-	if [[ -f us_baby_names/yob$1.txt ]]
+	if [[ -f us_baby_names/yob$1.txt ]] #checks that file for inputted year exsists
 	then
 		while read line 
 		do
 			for word in $line
 			do
-				if [[ $word =~ ^[a-zA-Z]+$ ]]
+				if [[ $word =~ ^[a-zA-Z]+$ ]] #checks that name is correctly formatted (only english characters)
 				then
 					if [[ "$2" == "M" || "$2" == 'm' ]]
 					then

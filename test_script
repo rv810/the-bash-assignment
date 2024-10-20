@@ -88,8 +88,14 @@ test() {
 test './bn 2022 m' 0 'Sam' '2022: Sam ranked 658 out of 14255 male names.' ''
 
 # multi line success
-test './bn 2022 B' 0 'Sam' '2022: Sam ranked 658 out of 14255 male names.
-2022: Sam ranked 6628 out of 17660 female names.' ''
+test './bn 1972 B' 0 'Cheryl MATTHEW lisa cArL' '1972: Cheryl ranked 1685 out of 5753 male names.
+1972: Cheryl ranked 56 out of 9663 female names.
+1972: MATTHEW ranked 10 out of 5753 male names.
+1972: MATTHEW ranked 999 out of 9663 female names.
+1972: lisa ranked 820 out of 5753 male names.
+1972: lisa ranked 3 out of 9663 female names.
+1972: cArL ranked 85 out of 5753 male names.
+1972: cArL ranked 2139 out of 9663 female names.' ''
 test './bn 1990 f' 0 'catherine Lucy' '1990: catherine ranked 71 out of 15234 female names.
 1990: Lucy ranked 448 out of 15234 female names.' ''
 
